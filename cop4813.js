@@ -70,7 +70,7 @@ angular.module('cop4813', ['ngRoute', 'ngSanitize', 'ui.mask']).config(
             body += 'Phone Number: ' + telFilter($scope.model.phone) + '. ';
             body += 'Email: ' + $scope.model.email + '. ';
             body += 'Birth Date: ' + dateFilter($scope.model.birthdate) + '. ';
-            body += 'Message: ' + $scope.model.message + '.';
+            body += 'Message: ' + $scope.model.message;
             $scope.mailto = 'mailto:juan_fiallo@daytonastate.edu?subject='
                     + urlFilter(subject) + '&body=' + urlFilter(body);
           };
