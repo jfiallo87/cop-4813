@@ -56,6 +56,18 @@ angular.module('cop4813', ['ngRoute', 'ngSanitize', 'ui.mask']).config(
           $scope.currentDate = new Date();
           $scope.mailto = '';
           $scope.step = 1;
+          $scope.captchas = [{
+            q: 'If tomorrow is Monday, what day is today?',
+            a: 'Sunday'
+          }, {
+            q: 'If tomorrow is Sunday, what day is today?',
+            a: 'Saturday'
+          }, {
+            q: 'If yesterday was Sunday, what day is today?',
+            a: 'Monday'
+          }];
+          $scope.cq = Math.floor(Math.random() * 3);
+          $scope.ca = null;
           $scope.model = {
             state: 'AL'
           };
