@@ -1,4 +1,4 @@
-angular.module('cop4813', ['ngRoute', 'ngSanitize', 'ui.mask']).config(
+angular.module('cop4813', ['ngRoute', 'ngSanitize', 'ui.mask', 'highcharts-ng']).config(
         function($routeProvider) {
           $routeProvider.when('/', {
             templateUrl: 'main/index.html'
@@ -9,6 +9,9 @@ angular.module('cop4813', ['ngRoute', 'ngSanitize', 'ui.mask']).config(
           }).when('/assignments/3', {
             templateUrl: 'assignments/3/index.html',
             controller: 'a3'
+          }).when('/assignments/4', {
+            templateUrl: 'assignments/4/index.html',
+            controller: 'a4'
           }).otherwise({
             redirectTo: '/'
           });
@@ -89,4 +92,64 @@ angular.module('cop4813', ['ngRoute', 'ngSanitize', 'ui.mask']).config(
           $scope.back = function() {
             $scope.step--;
           };
-        });
+        }).controller('a4', function($scope, orderByFilter) {
+  $scope.G = 6.674 * Math.pow(10, -11);
+  $scope.m1 = 1;
+  $scope.m2 = 1;
+  $scope.distances = [{
+    value: 100
+  }, {
+    value: 200
+  }, {
+    value: 300
+  }, {
+    value: 400
+  }, {
+    value: 500
+  }];
+  $scope.newDistance = null;
+  $scope.F = [];
+  $scope.addNewDistance = function() {
+    if ($scope.newDistance) {
+      $scope.distances.push({
+        value: $scope.newDistance
+      });
+    }
+    $scope.newDistance = null;
+  };
+  $scope.removeDistance = function(i) {
+    $scope.distances.splice(i, 1);
+  };
+  $scope.plotGravity = function() {
+    $scope.gravity = {
+      chart: {
+        options: {
+          chart: {
+            type: 'line',
+            zoomType: 'x'
+          }
+        },
+        series: [{
+          name: 'Gravity',
+          data: $scope.F
+        }],
+        title: {
+          text: 'Gravity Plot'
+        }
+      }
+    };
+  };
+  $scope.calculateGravity = function() {
+    $scope.F = [];
+    var m1 = $scope.m1 * 1000000000;
+    var m2 = $scope.m2 * 1000000000;
+    $scope.distances = orderByFilter($scope.distances, 'value');
+    angular.forEach($scope.distances, function(distance) {
+      var d = distance.value;
+      var F = Math.ceil(($scope.G * m1 * m2) / Math.pow(d, 2));
+      $scope.F.push([d, F]);
+    });
+    $scope.plotGravity();
+  };
+  $scope.calculateGravity();
+});
