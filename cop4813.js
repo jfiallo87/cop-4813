@@ -17,6 +17,13 @@ angular
           }).when('/assignments/5', {
             templateUrl: 'assignments/5/index.html',
             controller: 'a5'
+          }).when('/assignments/6/1', {
+            templateUrl: 'assignments/6/1/index.html'
+          }).when('/assignments/6/2', {
+            templateUrl: 'assignments/6/2/index.html'
+          }).when('/assignments/6/3', {
+            templateUrl: 'assignments/6/3/index.html',
+            controller: 'a6.3'
           }).otherwise({
             redirectTo: '/'
           });
@@ -238,4 +245,16 @@ angular
                   var randomNumber = function(min, max) {
                     return Math.floor(Math.random() * (max - min + 1)) + min;
                   }
+                })
+        .controller(
+                'a6.3',
+                function($scope) {
+                  var options = {};
+                  var map = new google.maps.Map(document.getElementById("map"),
+                          options);
+                  var url = 'http://cop4813.juanfiallo.com/assignments/6/3/hialeah.kml?v=0.1';
+                  var kml = {
+                    map: map
+                  };
+                  var layer = new google.maps.KmlLayer(url, kml);
                 });
