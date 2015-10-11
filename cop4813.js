@@ -1,6 +1,8 @@
 angular
-        .module('cop4813',
-                ['ngRoute', 'ngSanitize', 'ui.mask', 'highcharts-ng'])
+        .module(
+                'cop4813',
+                ['ngRoute', 'ngSanitize', 'ui.mask', 'highcharts-ng',
+                    'ngDragDrop'])
         .config(function($routeProvider) {
           $routeProvider.when('/', {
             templateUrl: 'main/index.html'
@@ -24,6 +26,9 @@ angular
           }).when('/assignments/6/3', {
             templateUrl: 'assignments/6/3/index.html',
             controller: 'a6.3'
+          }).when('/assignments/7', {
+            templateUrl: 'assignments/7/index.html',
+            controller: 'a7'
           }).otherwise({
             redirectTo: '/'
           });
@@ -257,4 +262,68 @@ angular
                     map: map
                   };
                   var layer = new google.maps.KmlLayer(url, kml);
+                }).controller(
+                'a7',
+                function($scope, $window) {
+                  $scope.model = {};
+                  $scope.model.deck = [];
+                  var currentCardIndex = 0;
+                  var nextCard = function() {
+                    $scope.model.currentGuess = $scope.model.deck[0];
+                    currentCardIndex = Math.floor(Math.random() * $scope.model.deck.length);
+                    $scope.model.currentCard = $scope.model.deck[currentCardIndex];
+                  };
+                  $scope.setUp = function() {
+                    $scope.model.successCount = 0;
+                    $scope.model.deck = [];
+                    $scope.model.discardedDeck = [];
+                    var cardSuits = ['clubs', 'diamonds', 'hearts', 'spades'];
+                    var cardPrototypes = [];
+                    for (i = 1; i <= 13; i++) {
+                      var cardPrototype = {
+                        number: i,
+                        name: '' + i
+                      };
+                      cardPrototypes.push(cardPrototype);
+                    }
+                    cardPrototypes[0].name = 'ace';
+                    cardPrototypes[10].name = 'jack';
+                    cardPrototypes[11].name = 'queen';
+                    cardPrototypes[12].name = 'king';
+                    angular.forEach(cardSuits, function(suit) {
+                      angular.forEach(cardPrototypes, function(prototype) {
+                        var card = {
+                          id: suit + '-' + prototype.number,
+                          name: prototype.name + ' of ' + suit,
+                          img: 'assignments/7/deck/' + prototype.name + '_of_'
+                                  + suit + '.png',
+                          revealed: false
+                        };
+                        $scope.model.deck.push(card);
+                      });
+                    });
+                    nextCard();
+                  };
+                  $scope.setUp();
+                  $scope.currentCardImg = function() {
+                    var img = '';
+                    if ($scope.model.currentCard && $scope.model.currentCard.img) {
+                      img = 'assignments/7/deck/back.png';
+                      if ($scope.model.currentCard.revealed) {
+                        img = $scope.model.currentCard.img;
+                      }
+                    }
+                    return img;
+                  };
+                  $scope.guess = function() {
+                    if ($scope.model.currentGuess.id == $scope.model.currentCard.id) {
+                      $scope.model.successCount++;
+                    }
+                    $scope.model.currentCard.revealed = true;
+                  };
+                  $scope.discard = function() {
+                    var discardedCardName = $scope.model.deck.splice(currentCardIndex, 1)[0].name;
+                    nextCard();
+                    $window.alert('You discarded the ' + discardedCardName);
+                  };
                 });
