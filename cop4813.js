@@ -29,6 +29,8 @@ angular
           }).when('/assignments/7', {
             templateUrl: 'assignments/7/index.html',
             controller: 'a7'
+          }).when('/assignments/8', {
+            templateUrl: 'assignments/8/index.html'
           }).otherwise({
             redirectTo: '/'
           });

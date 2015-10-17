@@ -1,0 +1,44 @@
+<div class="jumbotron">
+	<div class="page-header">
+		<h1>Client Project - Use Case(s)</h1>
+	</div>
+	<hr />
+	<p>
+		Raisa Cavalcante (henceforth known as the "client") has
+		requested a basic "professional profile" web site (henceforth known as
+		the "web site") to increase her visibility to "prospective employers".
+		The web site will consist of the following:
+	</p>
+	<ul>
+		<li>A home page containing her Resume (Summary, Education, Professional Experience, etc.)</li>
+		<li>A contact form allowing prospective employers to get in touch with the client</li>
+	</ul>
+	<h2>Use Case: Contact by Prospective Employer</h2>
+	<h3>Main Success Scenario</h3>
+	<ol>
+		<li>Prospective employer lands on the web site's home page</li>
+		<li>Prospective employer decides to contact the client</li>
+		<li>Prospective employer follows link to contact form</li>
+		<li>Prospective employer fills and submits contact form</li>
+		<li>Client receives email with prospective employer's contact information</li>
+	</ol>
+	<h4>Extensions</h4>
+	<ol start="1">
+		<li>
+			<h5>Prospective employer decides not to contact the client</h5>
+			<ol style="list-style-type: lower-alpha;">
+				<li>Prospective employer navigates away from the web site</li>
+			</ol>
+		</li>
+	</ol>
+	<ol start="4">
+		<li>
+			<h5>Contact form contains validation errors</h5>
+			<ol style="list-style-type: lower-alpha;">
+				<li>Validation errors are displayed on the contact form</li>
+				<li>Prospective employer corrects the errors and re-submits the form</li>
+				<li>Proceed to step 5</li>
+			</ol>
+		</li>
+	</ol>
+</div>
