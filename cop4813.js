@@ -39,6 +39,9 @@ angular
 			}).when('/assignments/13', {
 				templateUrl : 'assignments/13/index.html',
 				controller : 'a13'
+			}).when('/assignments/14', {
+				templateUrl : 'assignments/14/index.html',
+				controller : 'a14'
 			}).otherwise({
 				redirectTo : '/'
 			});
@@ -509,5 +512,149 @@ angular
 								currentCardIndex, 1)[0].name;
 						nextCard();
 						$window.alert('You discarded the ' + discardedCardName);
+					};
+				})
+		.controller(
+				'a14',
+				function($scope, $timeout) {
+					$scope.model = {};
+					$scope.model.deck = [];
+					$scope.model.discardedDeck = [];
+					$scope.model.guesses = [];
+					$scope.model.currentCard = {};
+					$scope.model.successCount = 0;
+					$scope.successAlert = {
+						msgAvailable : false,
+						msg : '',
+						type : 'success'
+					};
+					$scope.failureAlert = {
+						msgAvailable : false,
+						msg : '',
+						type : 'danger'
+					};
+					$scope.infoAlert = {
+						msgAvailable : false,
+						msg : '',
+						type : 'info'
+					};
+					$scope.alerts = [ $scope.successAlert, $scope.failureAlert,
+							$scope.infoAlert ];
+					var currentCardIndex = 0;
+					var randomCard = function(cards) {
+						return Math.floor(Math.random() * cards.length);
+					}
+					var prepareGuesses = function() {
+						$scope.model.guesses = [];
+						$scope.model.guesses.push($scope.model.currentCard);
+						if ($scope.model.discardedDeck.length > 0) {
+							$scope.model.guesses
+									.push($scope.model.discardedDeck[randomCard($scope.model.discardedDeck)]);
+						}
+						var length = 3 - $scope.model.guesses.length;
+						for (var i = 0; i < length; i++) {
+							$scope.model.guesses
+									.push($scope.model.deck[randomCard($scope.model.deck)]);
+						}
+						$scope.model.guesses = _.shuffle($scope.model.guesses);
+					};
+					var nextCard = function() {
+						$scope.model.currentGuess = $scope.model.deck[0];
+						currentCardIndex = randomCard($scope.model.deck);
+						$scope.model.currentCard = $scope.model.deck[currentCardIndex];
+						prepareGuesses();
+					};
+					var clearAlert = function(alert) {
+						alert.msgAvailable = false;
+						alert.msg = '';
+					}
+					var clearAlerts = function() {
+						angular.forEach($scope.alerts, function(alert) {
+							if (alert.clear) {
+								$timeout.cancel(alert.clear);
+							}
+							clearAlert(alert);
+						});
+					}
+					var sendAlert = function(alert, msg) {
+						if (alert && msg) {
+							clearAlerts();
+							alert.msgAvailable = true;
+							alert.msg = msg;
+							alert.clear = $timeout(function() {
+								clearAlert(alert);
+							}, 3000);
+						}
+					};
+					var sendSuccessAlert = function(msg) {
+						sendAlert($scope.successAlert, msg);
+					};
+					var sendFailureAlert = function(msg) {
+						sendAlert($scope.failureAlert, msg);
+					};
+					var sendInfoAlert = function(msg) {
+						sendAlert($scope.infoAlert, msg);
+					};
+					$scope.setUp = function() {
+						$scope.model.successCount = 0;
+						$scope.model.deck = [];
+						$scope.model.discardedDeck = [];
+						var cardSuits = [ 'clubs', 'diamonds', 'hearts',
+								'spades' ];
+						var cardPrototypes = [];
+						for (i = 1; i <= 13; i++) {
+							var cardPrototype = {
+								number : i,
+								name : '' + i
+							};
+							cardPrototypes.push(cardPrototype);
+						}
+						cardPrototypes[0].name = 'ace';
+						cardPrototypes[10].name = 'jack';
+						cardPrototypes[11].name = 'queen';
+						cardPrototypes[12].name = 'king';
+						angular.forEach(cardSuits, function(suit) {
+							angular.forEach(cardPrototypes,
+									function(prototype) {
+										var card = {
+											id : suit + '-' + prototype.number,
+											name : prototype.name + ' of '
+													+ suit,
+											img : 'assignments/14/deck/'
+													+ prototype.name + '_of_'
+													+ suit + '.png',
+											revealed : false
+										};
+										$scope.model.deck.push(card);
+									});
+						});
+						nextCard();
+					};
+					$scope.setUp();
+					$scope.currentCardImg = function() {
+						var img = '';
+						if ($scope.model.currentCard
+								&& $scope.model.currentCard.img) {
+							img = 'assignments/14/deck/back.png';
+							if ($scope.model.currentCard.revealed) {
+								img = $scope.model.currentCard.img;
+							}
+						}
+						return img;
+					};
+					$scope.guess = function(card) {
+						if (card.id == $scope.model.currentCard.id) {
+							$scope.model.successCount++;
+							sendSuccessAlert('You guessed correctly :-)');
+						} else {
+							sendFailureAlert('Your guess is wrong. Better luck next time :-(');
+						}
+						$scope.model.currentCard.revealed = true;
+					};
+					$scope.discard = function() {
+						var discardedCard = $scope.model.deck.splice(
+								currentCardIndex, 1)[0];
+						nextCard();
+						sendInfoAlert('You discarded the ' + discardedCard.name);
 					};
 				});
